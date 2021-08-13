@@ -1,0 +1,40 @@
+plugins {
+    id "com.palantir.docker"
+    id "com.palantir.docker-run"
+    id 'org.springframework.boot' version '2.4.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.ajitata'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':sabidrive-model')
+    implementation project(':sabidrive-config')
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'io.projectreactor:reactor-core:3.4.4'
+    implementation 'org.springframework.data:spring-data-redis:2.4.5'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+docker {
+    name "${project.name}:${project.version}"
+    files 'sabidrive-taxi-service.jar'
+}
+
+dockerRun {
+    name "${project.name}"
+    image "${project.name}:${project.version}"
+    ports '8080:8080'
+    clean true
+}
+
+test {
+    useJUnitPlatform()
+}

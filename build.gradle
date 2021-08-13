@@ -1,0 +1,23 @@
+plugins {
+    id "com.palantir.docker-compose" version "0.26.0"
+    id 'java'
+}
+
+group = 'com.ajitata'
+version = '1.0.0'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+dockerCompose {
+    dockerComposeFile 'docker-compose.yml'
+}
+
+test {
+    useJUnitPlatform()
+}

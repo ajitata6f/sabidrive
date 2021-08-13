@@ -1,0 +1,51 @@
+version: "3.0"
+services:
+  sabidrive-taxi-service:
+    build: ./sabidrive-taxi-service/
+    image: sabidrive-taxi-service:1.0.0
+    container_name: sabidrive-taxi-service
+    networks:
+      - backend
+    volumes:
+      - data:/tmp
+    depends_on:
+      - db
+  sabidrive-booking-service:
+    build: ./sabidrive-booking-service/
+    image: sabidrive-booking-service:1.0.0
+    container_name: sabidrive-booking-service
+    networks:
+      - backend
+    volumes:
+      - data:/tmp
+    depends_on:
+      - db
+  db:
+    hostname: redis
+    container_name: redis-store
+    image: "redis:alpine"
+    command: ["redis-server", "--bind", "redis", "--port", "6379"]
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+  nginx-lb:
+    container_name: nginx-lb
+    image: nginx:1.13
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - backend
+    depends_on:
+      - sabidrive-taxi-service
+      - sabidrive-booking-service
+volumes:
+  data:
+    driver: local
+networks:
+  backend:
+    driver: bridge
